@@ -1,0 +1,1806 @@
+<!-- Google Fonts: Plus Jakarta Sans --><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SparkGig — Creator Economy Marketplace</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#fdf4ff',
+              100: '#fae8ff',
+              200: '#f5d0fe',
+              300: '#f0abfc',
+              400: '#e879f9',
+              500: '#d946ef',
+              600: '#c026d3',
+              700: '#a21caf',
+              800: '#86198f',
+              900: '#701a75',
+              DEFAULT: '#9333ea',
+              dark: '#581c87'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    .glass-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    .glow-effect {
+      box-shadow: 0 0 25px -5px rgba(217, 70, 239, 0.25);
+    }
+
+    /* Modal animation */
+    .fade-scale-enter {
+      animation: enterModal 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes enterModal {
+      from {
+        opacity: 0;
+        transform: scale(0.96) translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-fuchsia-500 selection:text-white">
+
+  <!-- Top Global Header -->
+  <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchView('marketplace')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-fuchsia-600 via-purple-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-purple-500/25">
+          <i data-lucide="sparkles" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent flex items-center gap-1.5">
+            SparkGig
+            <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-fuchsia-500/20 text-fuchsia-400 border border-fuchsia-500/30 font-semibold tracking-normal">GEN-Z</span>
+          </div>
+          <p class="text-[11px] text-slate-400 hidden sm:block">The Creator Economy Market</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="hidden md:flex items-center gap-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700/60">
+        <button id="nav-marketplace" onclick="switchView('marketplace')" class="nav-btn px-4 py-1.5 text-xs font-semibold rounded-lg transition-all text-white bg-slate-700 shadow-sm flex items-center gap-2">
+          <i data-lucide="compass" class="w-4 h-4 text-fuchsia-400"></i> Explore Gigs
+        </button>
+        <button id="nav-post" onclick="switchView('post')" class="nav-btn px-4 py-1.5 text-xs font-semibold rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-2">
+          <i data-lucide="plus-circle" class="w-4 h-4 text-violet-400"></i> Post a Gig
+        </button>
+        <button id="nav-my-bookings" onclick="switchView('bookings')" class="nav-btn px-4 py-1.5 text-xs font-semibold rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-2 relative">
+          <i data-lucide="shopping-bag" class="w-4 h-4 text-cyan-400"></i> My Orders
+          <span id="badge-client-bookings" class="w-2 h-2 rounded-full bg-cyan-400 hidden"></span>
+        </button>
+        <button id="nav-creator-dash" onclick="switchView('dashboard')" class="nav-btn px-4 py-1.5 text-xs font-semibold rounded-lg transition-all text-slate-400 hover:text-white flex items-center gap-2 relative">
+          <i data-lucide="layout-dashboard" class="w-4 h-4 text-emerald-400"></i> Creator Studio
+          <span id="badge-pending-orders" class="px-1.5 py-0.2 rounded-full bg-amber-500 text-[10px] font-bold text-slate-950 hidden">0</span>
+        </button>
+      </nav>
+
+      <!-- Role Mode Toggle & User profile -->
+      <div class="flex items-center gap-3">
+        <!-- Dual Role Mode Switcher -->
+        <div class="flex items-center gap-2 bg-slate-800/90 p-1 rounded-2xl border border-slate-700">
+          <button id="role-client-btn" onclick="setRole('client')" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all bg-fuchsia-600 text-white shadow-md">
+            <i data-lucide="briefcase" class="w-3.5 h-3.5"></i>
+            <span>Client</span>
+          </button>
+          <button id="role-creator-btn" onclick="setRole('creator')" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all text-slate-400 hover:text-white">
+            <i data-lucide="palette" class="w-3.5 h-3.5"></i>
+            <span>Creator</span>
+          </button>
+        </div>
+
+        <!-- Active User Badge -->
+        <div id="active-profile-chip" class="hidden sm:flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-xl px-2.5 py-1.5">
+          <img id="active-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="w-6 h-6 rounded-full object-cover ring-1 ring-fuchsia-500/50" />
+          <div class="text-left">
+            <div id="active-name" class="text-xs font-bold leading-tight">Sarah Chen</div>
+            <div id="active-role-label" class="text-[10px] text-fuchsia-400 font-medium">Brand Marketer</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Mobile Tab Bar Sub-Header -->
+    <div class="md:hidden flex items-center justify-around border-t border-slate-800 bg-slate-900/95 py-2 px-2 text-xs">
+      <button onclick="switchView('marketplace')" class="mobile-nav-item flex flex-col items-center text-fuchsia-400 font-medium" data-target="marketplace">
+        <i data-lucide="compass" class="w-4 h-4 mb-0.5"></i> Explore
+      </button>
+      <button onclick="switchView('post')" class="mobile-nav-item flex flex-col items-center text-slate-400 font-medium" data-target="post">
+        <i data-lucide="plus-circle" class="w-4 h-4 mb-0.5"></i> Post Gig
+      </button>
+      <button onclick="switchView('bookings')" class="mobile-nav-item flex flex-col items-center text-slate-400 font-medium" data-target="bookings">
+        <i data-lucide="shopping-bag" class="w-4 h-4 mb-0.5"></i> Orders
+      </button>
+      <button onclick="switchView('dashboard')" class="mobile-nav-item flex flex-col items-center text-slate-400 font-medium" data-target="dashboard">
+        <i data-lucide="layout-dashboard" class="w-4 h-4 mb-0.5"></i> Studio
+      </button>
+    </div>
+  </header>
+
+  <!-- Floating Toast Notifications -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ============================================================= -->
+    <!-- VIEW 1: BROWSE & SEARCH MARKETPLACE                           -->
+    <!-- ============================================================= -->
+    <section id="view-marketplace" class="space-y-8">
+      
+      <!-- Banner / Hero Section -->
+      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-900/40 via-fuchsia-950/40 to-slate-900 border border-purple-500/20 p-6 sm:p-10">
+        <div class="absolute -right-16 -top-16 w-80 h-80 bg-fuchsia-600/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="relative z-10 max-w-2xl space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-fuchsia-500/10 border border-fuchsia-500/30 text-fuchsia-300 text-xs font-semibold">
+            <i data-lucide="flame" class="w-3.5 h-3.5 text-amber-400"></i> Empowering the next-gen creator workforce
+          </div>
+          <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+            Hire Top Creators. <br/>
+            <span class="bg-gradient-to-r from-fuchsia-400 via-pink-400 to-indigo-400 bg-clip-text text-transparent">Turn Ideas Into Viral Hits.</span>
+          </h1>
+          <p class="text-sm sm:text-base text-slate-300">
+            Book certified TikTok editors, 3D artists, thumbnail alchemists, and ghostwriters directly. Transparent rates, fast turnarounds.
+          </p>
+
+          <!-- Search Bar & Filters -->
+          <div class="pt-2 flex flex-col sm:flex-row gap-2 max-w-xl">
+            <div class="relative flex-1">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
+              <input 
+                id="search-input" 
+                type="text" 
+                placeholder="Try 'TikTok video editing', 'Blender 3D', 'Thumbnails'..." 
+                oninput="handleFilterChange()" 
+                class="w-full bg-slate-900/90 border border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:border-transparent transition-all"
+              />
+            </div>
+            <div class="flex gap-2">
+              <select id="filter-sort" onchange="handleFilterChange()" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
+                <option value="popular">🔥 Most Popular</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="rating">Top Rated (4.8+)</option>
+              </select>
+              <button onclick="resetFilters()" title="Reset Filters" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs border border-slate-700 flex items-center gap-1">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Categories Pills Bar -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+            <i data-lucide="layers" class="w-4 h-4 text-fuchsia-400"></i> Categories
+          </h2>
+          <span id="gig-count-badge" class="text-xs text-slate-400 font-medium">Showing 6 gigs</span>
+        </div>
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none" id="categories-container">
+          <!-- Dynamically populated categories -->
+        </div>
+      </div>
+
+      <!-- Gigs Grid -->
+      <div id="gigs-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Rendered via JavaScript -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="gigs-empty-state" class="hidden text-center py-16 px-4">
+        <div class="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto mb-4 text-slate-400">
+          <i data-lucide="search-x" class="w-8 h-8"></i>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-1">No creator gigs found</h3>
+        <p class="text-sm text-slate-400 max-w-sm mx-auto mb-4">Try adjusting your search terms or clearing the selected category filter.</p>
+        <button onclick="resetFilters()" class="px-4 py-2 bg-fuchsia-600 hover:bg-fuchsia-500 rounded-xl text-xs font-semibold text-white transition-all shadow-md">
+          Reset all filters
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- VIEW 2: POST A GIG (CREATOR FEATURE)                          -->
+    <!-- ============================================================= -->
+    <section id="view-post" class="hidden max-w-3xl mx-auto space-y-6">
+      
+      <div class="border-b border-slate-800 pb-4">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/30 text-violet-400 text-xs font-semibold mb-2">
+          <i data-lucide="sparkle" class="w-3 h-3"></i> Monetize your Creator Craft
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">List a New Creator Service</h2>
+        <p class="text-sm text-slate-400 mt-1">Fill out the gig details to showcase your offerings to brands, YouTubers, and agencies.</p>
+      </div>
+
+      <form id="post-gig-form" onsubmit="handlePostGigSubmit(event)" class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        
+        <!-- Gig Title -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            Gig Title <span class="text-fuchsia-400">*</span>
+          </label>
+          <div class="relative">
+            <span class="absolute left-3.5 top-2.5 text-xs text-slate-500 font-semibold select-none">I will</span>
+            <input 
+              id="gig-title" 
+              type="text" 
+              required 
+              placeholder="edit high-retention TikTok & Reels with Alex Hormozi captions" 
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-16 pr-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 transition-all"
+            />
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1">Keep it crisp, actionable, and focused on tangible outcomes.</p>
+        </div>
+
+        <!-- Category & Delivery Days (2 Columns) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+              Primary Category <span class="text-fuchsia-400">*</span>
+            </label>
+            <select id="gig-category" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
+              <option value="Video Editing">🎬 Video Editing (Reels, TikTok, YouTube)</option>
+              <option value="UGC & TikTok">📱 UGC & TikTok Creator Videos</option>
+              <option value="Thumbnails & Visuals">🎨 Thumbnails, Avatars & Visuals</option>
+              <option value="Audio & Beats">🎵 Audio, Beats & Podcast Mix</option>
+              <option value="Scriptwriting & Hooks">✍️ Scriptwriting & Viral Hooks</option>
+              <option value="Brand Identity">💎 Brand Identity & Media Kits</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+              Delivery Turnaround (Days) <span class="text-fuchsia-400">*</span>
+            </label>
+            <div class="relative">
+              <i data-lucide="clock" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+              <input 
+                id="gig-delivery" 
+                type="number" 
+                min="1" 
+                max="30" 
+                value="2" 
+                required 
+                class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Pricing Tiers (Rate) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+              Starting Rate ($ USD) <span class="text-fuchsia-400">*</span>
+            </label>
+            <div class="relative">
+              <span class="absolute left-3.5 top-2.5 text-sm text-slate-400 font-bold">$</span>
+              <input 
+                id="gig-price" 
+                type="number" 
+                min="5" 
+                max="10000" 
+                step="5" 
+                value="120" 
+                required 
+                class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-8 pr-4 py-2.5 text-sm text-white font-semibold focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+              Creator Portfolio Link
+            </label>
+            <div class="relative">
+              <i data-lucide="link" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+              <input 
+                id="gig-portfolio" 
+                type="url" 
+                placeholder="https://instagram.com/alexrivera" 
+                class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Cover Image Preset selector / Custom URL -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            Cover Thumbnail Photo URL
+          </label>
+          <div class="flex gap-2">
+            <input 
+              id="gig-cover" 
+              type="url" 
+              value="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80" 
+              oninput="updateCoverPreview(this.value)"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
+            />
+            <button type="button" onclick="cycleRandomCover()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl border border-slate-700 text-xs whitespace-nowrap text-slate-300">
+              🎲 Random
+            </button>
+          </div>
+          <!-- Preview container -->
+          <div class="mt-3 relative h-36 rounded-xl overflow-hidden border border-slate-700 bg-slate-900">
+            <img id="cover-preview-img" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80" alt="Preview" class="w-full h-full object-cover" />
+            <div class="absolute bottom-2 left-2 px-2 py-1 rounded bg-black/70 backdrop-blur text-[10px] font-mono text-slate-300">Live Preview</div>
+          </div>
+        </div>
+
+        <!-- Detailed Description -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            Full Description & Deliverables <span class="text-fuchsia-400">*</span>
+          </label>
+          <textarea 
+            id="gig-description" 
+            rows="4" 
+            required 
+            placeholder="Specify what you provide, revisions included, software used (Premiere, After Effects, DaVinci, Blender), sound design, sound effects, and project workflow..."
+            class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 leading-relaxed"
+          ></textarea>
+        </div>
+
+        <!-- Deliverables Tags (comma separated) -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            Key Tags / Skills (Comma separated)
+          </label>
+          <input 
+            id="gig-tags" 
+            type="text" 
+            value="Color Grade, Sound FX, Motion Graphics, Subtitles" 
+            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
+          />
+        </div>
+
+        <!-- Creator Identity toggle notice -->
+        <div class="p-3.5 rounded-xl bg-purple-950/40 border border-purple-800/40 flex items-start gap-3">
+          <i data-lucide="info" class="w-5 h-5 text-fuchsia-400 shrink-0 mt-0.5"></i>
+          <p class="text-xs text-slate-300">
+            Publishing as <span class="font-bold text-white">Alex Rivera</span> (Creator Mode profile). Clients can book you directly and booking requests will appear under your <strong>Creator Studio</strong> tab.
+          </p>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="flex items-center justify-end gap-3 pt-2">
+          <button type="button" onclick="switchView('marketplace')" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition-all">
+            Cancel
+          </button>
+          <button type="submit" class="px-6 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-500 hover:to-purple-500 text-white shadow-lg shadow-purple-600/30 flex items-center gap-2 transition-all">
+            <i data-lucide="send" class="w-4 h-4"></i> Publish Creator Gig
+          </button>
+        </div>
+
+      </form>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- VIEW 3: CREATOR DASHBOARD (ACCEPT/DECLINE BOOKINGS)          -->
+    <!-- ============================================================= -->
+    <section id="view-dashboard" class="hidden space-y-8">
+      
+      <!-- Studio Header & Metrics -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+        <div>
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold mb-2">
+            <i data-lucide="sparkles" class="w-3 h-3"></i> Creator Command Center
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Creator Studio</h2>
+          <p class="text-sm text-slate-400 mt-0.5">Manage your active client pipelines, respond to briefs, and track gig revenue.</p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="switchView('post')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-semibold flex items-center gap-2">
+            <i data-lucide="plus" class="w-4 h-4 text-fuchsia-400"></i> New Gig Listing
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Metrics Grid -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <div class="glass-card rounded-2xl p-4 sm:p-5">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-semibold mb-2">
+            <span>Total Earnings</span>
+            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+              <i data-lucide="dollar-sign" class="w-4 h-4"></i>
+            </div>
+          </div>
+          <div id="stat-earnings" class="text-2xl font-black text-white">$1,480</div>
+          <span class="text-[11px] text-emerald-400 font-medium">↑ 18% this month</span>
+        </div>
+
+        <div class="glass-card rounded-2xl p-4 sm:p-5">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-semibold mb-2">
+            <span>Pending Briefs</span>
+            <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center">
+              <i data-lucide="clock" class="w-4 h-4"></i>
+            </div>
+          </div>
+          <div id="stat-pending" class="text-2xl font-black text-white">0</div>
+          <span class="text-[11px] text-amber-400 font-medium">Needs creator response</span>
+        </div>
+
+        <div class="glass-card rounded-2xl p-4 sm:p-5">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-semibold mb-2">
+            <span>Active Orders</span>
+            <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center">
+              <i data-lucide="loader" class="w-4 h-4"></i>
+            </div>
+          </div>
+          <div id="stat-active" class="text-2xl font-black text-white">0</div>
+          <span class="text-[11px] text-indigo-300 font-medium">In production</span>
+        </div>
+
+        <div class="glass-card rounded-2xl p-4 sm:p-5">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-semibold mb-2">
+            <span>Acceptance Rate</span>
+            <div class="w-8 h-8 rounded-lg bg-fuchsia-500/10 text-fuchsia-400 flex items-center justify-center">
+              <i data-lucide="check-circle" class="w-4 h-4"></i>
+            </div>
+          </div>
+          <div id="stat-rate" class="text-2xl font-black text-white">96%</div>
+          <span class="text-[11px] text-slate-400 font-medium">Top Rated Creator badge</span>
+        </div>
+
+      </div>
+
+      <!-- Incoming Bookings Table / Card View -->
+      <div class="space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="flex items-center gap-3">
+            <h3 class="text-lg font-bold text-white">Booking Requests & Orders</h3>
+            <span id="creator-orders-count" class="px-2 py-0.5 bg-slate-800 rounded-full text-xs font-mono text-slate-400">0 orders</span>
+          </div>
+
+          <!-- Quick status filter -->
+          <div class="flex items-center gap-1.5 bg-slate-900 border border-slate-800 p-1 rounded-xl text-xs">
+            <button onclick="filterCreatorOrders('ALL')" class="creator-filter-btn px-2.5 py-1 rounded-lg bg-slate-800 text-white font-medium">All</button>
+            <button onclick="filterCreatorOrders('PENDING')" class="creator-filter-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white font-medium">Pending Review</button>
+            <button onclick="filterCreatorOrders('ACCEPTED')" class="creator-filter-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white font-medium">Accepted</button>
+            <button onclick="filterCreatorOrders('DECLINED')" class="creator-filter-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white font-medium">Declined</button>
+          </div>
+        </div>
+
+        <div id="creator-bookings-list" class="space-y-3">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Creator Empty state -->
+        <div id="creator-bookings-empty" class="hidden text-center py-12 glass-card rounded-2xl">
+          <i data-lucide="inbox" class="w-10 h-10 text-slate-500 mx-auto mb-2"></i>
+          <p class="text-slate-300 font-semibold text-sm">No incoming booking requests right now</p>
+          <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Switch to Client Mode in the top header, pick a gig from the marketplace, and submit a brief to test instant bookings.</p>
+          <button onclick="setRole('client'); switchView('marketplace')" class="mt-4 px-4 py-2 bg-fuchsia-600 hover:bg-fuchsia-500 text-white rounded-xl text-xs font-semibold">
+            Test as Client
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- VIEW 4: MY BOOKINGS (CLIENT FEATURE)                          -->
+    <!-- ============================================================= -->
+    <section id="view-bookings" class="hidden space-y-6">
+      
+      <div class="border-b border-slate-800 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold mb-2">
+            <i data-lucide="shopping-bag" class="w-3 h-3"></i> Client Portal
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">My Bookings & Hires</h2>
+          <p class="text-sm text-slate-400 mt-0.5">Track creative status, view briefs, and communicate with hired creators.</p>
+        </div>
+
+        <!-- Filter tabs -->
+        <div class="flex items-center gap-1 bg-slate-900 border border-slate-800 p-1 rounded-xl text-xs overflow-x-auto">
+          <button onclick="filterClientBookings('ALL')" class="client-filter-btn px-3 py-1.5 rounded-lg bg-slate-800 text-white font-medium whitespace-nowrap">All Bookings</button>
+          <button onclick="filterClientBookings('PENDING')" class="client-filter-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white font-medium whitespace-nowrap">Pending</button>
+          <button onclick="filterClientBookings('ACCEPTED')" class="client-filter-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white font-medium whitespace-nowrap">Accepted</button>
+          <button onclick="filterClientBookings('DECLINED')" class="client-filter-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white font-medium whitespace-nowrap">Declined</button>
+        </div>
+      </div>
+
+      <!-- Bookings list container -->
+      <div id="client-bookings-list" class="space-y-4">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Client Empty state -->
+      <div id="client-bookings-empty" class="hidden text-center py-16 glass-card rounded-2xl">
+        <div class="w-14 h-14 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto mb-3 text-cyan-400">
+          <i data-lucide="package" class="w-6 h-6"></i>
+        </div>
+        <h3 class="text-base font-bold text-white">No active creator bookings yet</h3>
+        <p class="text-xs text-slate-400 max-w-sm mx-auto mt-1 mb-4">You haven't commissioned any creative work yet. Explore top creators on the marketplace to kick off your project!</p>
+        <button onclick="switchView('marketplace')" class="px-5 py-2.5 bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-500 hover:to-purple-500 rounded-xl text-xs font-bold text-white shadow-lg shadow-purple-600/30">
+          Browse Creative Gigs
+        </button>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ============================================================= -->
+  <!-- MODALS                                                        -->
+  <!-- ============================================================= -->
+  <!-- MODAL 1: Book a Gig Modal (Client Workflow) -->
+  <div id="book-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass-card bg-slate-900/95 border border-slate-700 w-full max-w-xl rounded-3xl overflow-hidden shadow-2xl fade-scale-enter max-h-[90vh] flex flex-col">
+      
+      <!-- Modal Header -->
+      <div class="p-6 border-b border-slate-800 flex items-start justify-between">
+        <div>
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-fuchsia-500/10 text-fuchsia-400 text-[11px] font-semibold mb-1">
+            <i data-lucide="sparkles" class="w-3 h-3"></i> Book Creator Service
+          </div>
+          <h3 id="modal-gig-title" class="text-lg font-extrabold text-white leading-snug">Order Gig Service</h3>
+          <p id="modal-creator-name" class="text-xs text-slate-400 mt-0.5">By Alex Rivera</p>
+        </div>
+        <button onclick="closeBookModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-all">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <form id="booking-form" onsubmit="handleBookingSubmit(event)" class="p-6 space-y-5 overflow-y-auto flex-1">
+        <input type="hidden" id="modal-gig-id" />
+
+        <!-- Package & Rate Tier Selector -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Select Creative Package</label>
+          <div class="grid grid-cols-3 gap-2.5" id="package-selector">
+            <label class="border border-fuchsia-500/80 bg-fuchsia-500/10 rounded-xl p-3 cursor-pointer text-center relative flex flex-col items-center justify-between">
+              <input type="radio" name="package-tier" value="Standard" checked onchange="updateModalPrice()" class="sr-only">
+              <span class="text-[11px] font-bold text-fuchsia-300">Standard</span>
+              <span id="package-price-std" class="text-base font-extrabold text-white mt-1">$120</span>
+              <span class="text-[10px] text-slate-400">1 Deliverable</span>
+            </label>
+            <label class="border border-slate-700 bg-slate-800/60 hover:border-slate-600 rounded-xl p-3 cursor-pointer text-center relative flex flex-col items-center justify-between">
+              <input type="radio" name="package-tier" value="Pro Bundle" onchange="updateModalPrice()" class="sr-only">
+              <span class="text-[11px] font-bold text-slate-300">Pro 3x Pack</span>
+              <span id="package-price-pro" class="text-base font-extrabold text-white mt-1">$300</span>
+              <span class="text-[10px] text-slate-400">3 Deliverables</span>
+            </label>
+            <label class="border border-slate-700 bg-slate-800/60 hover:border-slate-600 rounded-xl p-3 cursor-pointer text-center relative flex flex-col items-center justify-between">
+              <input type="radio" name="package-tier" value="Viral Monthly" onchange="updateModalPrice()" class="sr-only">
+              <span class="text-[11px] font-bold text-slate-300">Retainer</span>
+              <span id="package-price-monthly" class="text-base font-extrabold text-white mt-1">$850</span>
+              <span class="text-[10px] text-slate-400">Full Campaign</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Project Brief / Requirements -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            Project Brief & Creative Vision <span class="text-fuchsia-400">*</span>
+          </label>
+          <textarea 
+            id="book-brief" 
+            rows="3" 
+            required 
+            placeholder="Tell the creator about your brand, video hook idea, reference links (e.g. TikTok links), target audience, and desired vibe..."
+            class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 leading-relaxed"
+          ></textarea>
+        </div>
+
+        <!-- Deadline & Fast Delivery option -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+              Target Deadline <span class="text-fuchsia-400">*</span>
+            </label>
+            <input 
+              id="book-deadline" 
+              type="date" 
+              required 
+              class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
+            />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+              Asset / Drive Link
+            </label>
+            <input 
+              id="book-assets-url" 
+              type="url" 
+              placeholder="Google Drive, Dropbox or Frame.io" 
+              class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
+            />
+          </div>
+        </div>
+
+        <!-- Client Contact & simulated payment note -->
+        <div class="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-fuchsia-600/20 text-fuchsia-400 flex items-center justify-center">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white">SparkGig Escrow Protected</div>
+              <div class="text-[11px] text-slate-400">Payment released only after you approve delivery.</div>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] text-slate-400 uppercase">Total Due</span>
+            <div id="modal-summary-total" class="text-lg font-black text-white">$120</div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center justify-end gap-3 pt-2">
+          <button type="button" onclick="closeBookModal()" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">
+            Cancel
+          </button>
+          <button type="submit" class="px-6 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-fuchsia-600 via-pink-600 to-purple-600 hover:from-fuchsia-500 hover:to-purple-500 text-white shadow-lg shadow-purple-500/25 flex items-center gap-2">
+            <i data-lucide="check" class="w-4 h-4"></i> Confirm Booking Request
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: Booking Confirmation Receipt -->
+  <div id="confirmation-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass-card bg-slate-900 border border-slate-700 w-full max-w-md rounded-3xl p-6 sm:p-8 text-center fade-scale-enter relative overflow-hidden">
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center mx-auto text-slate-950 mb-4 shadow-xl shadow-emerald-500/20">
+        <i data-lucide="check-check" class="w-8 h-8 stroke-[2.5]"></i>
+      </div>
+
+      <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-semibold mb-2">
+        <i data-lucide="sparkles" class="w-3 h-3"></i> Booking Request Dispatched!
+      </div>
+      <h3 class="text-xl font-extrabold text-white">Order Confirmed</h3>
+      <p class="text-xs text-slate-400 mt-1">Your brief has been forwarded directly to the creator's queue.</p>
+
+      <!-- Receipt Box -->
+      <div class="mt-5 p-4 rounded-2xl bg-slate-950 border border-slate-800 text-left space-y-2.5 text-xs">
+        <div class="flex justify-between">
+          <span class="text-slate-400">Order Ref:</span>
+          <span id="receipt-id" class="font-mono font-bold text-fuchsia-400">#SG-9821</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Gig Service:</span>
+          <span id="receipt-gig" class="font-bold text-white truncate max-w-[200px]">TikTok Reels Editing</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Creator:</span>
+          <span id="receipt-creator" class="font-medium text-slate-200">Alex Rivera</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Tier:</span>
+          <span id="receipt-package" class="font-medium text-slate-200">Standard Package</span>
+        </div>
+        <div class="flex justify-between border-t border-slate-800 pt-2 font-bold">
+          <span class="text-slate-300">Amount:</span>
+          <span id="receipt-amount" class="text-sm font-extrabold text-emerald-400">$120.00</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Current Status:</span>
+          <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold text-[10px]">PENDING APPROVAL</span>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="mt-6 flex flex-col gap-2">
+        <button onclick="closeConfirmationModal('bookings')" class="w-full py-2.5 bg-fuchsia-600 hover:bg-fuchsia-500 rounded-xl text-xs font-bold text-white shadow-md">
+          Track in 'My Bookings'
+        </button>
+        <button onclick="closeConfirmationModal('marketplace')" class="w-full py-2 text-slate-400 hover:text-white text-xs font-medium">
+          Continue Exploring Gigs
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: Order Brief & Details Modal -->
+  <div id="order-detail-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass-card bg-slate-900 border border-slate-700 w-full max-w-lg rounded-3xl p-6 fade-scale-enter space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div>
+          <span id="detail-order-id" class="font-mono text-xs text-fuchsia-400 font-bold">#SG-0000</span>
+          <h3 id="detail-gig-title" class="text-base font-bold text-white">Order Details</h3>
+        </div>
+        <button onclick="closeDetailModal()" class="w-7 h-7 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
+          <span class="text-slate-400 block font-semibold uppercase text-[10px]">Submitted Client Brief</span>
+          <p id="detail-brief" class="text-slate-200 leading-relaxed italic">"Need high energy sound effects and colorful bold typography..."</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
+            <span class="text-slate-400 text-[10px] uppercase block font-semibold">Client Name</span>
+            <span id="detail-client-name" class="font-bold text-white">Sarah Chen</span>
+          </div>
+          <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
+            <span class="text-slate-400 text-[10px] uppercase block font-semibold">Creator</span>
+            <span id="detail-creator-name" class="font-bold text-white">Alex Rivera</span>
+          </div>
+          <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
+            <span class="text-slate-400 text-[10px] uppercase block font-semibold">Deadline</span>
+            <span id="detail-deadline" class="font-medium text-slate-200">2026-10-01</span>
+          </div>
+          <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
+            <span class="text-slate-400 text-[10px] uppercase block font-semibold">Total Price</span>
+            <span id="detail-price" class="font-bold text-emerald-400">$120</span>
+          </div>
+        </div>
+
+        <div id="detail-assets-row" class="p-2.5 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+          <span class="text-slate-400">Attached Drive/Assets:</span>
+          <a id="detail-assets-link" href="#" target="_blank" class="text-fuchsia-400 underline font-medium truncate max-w-[200px]">Link</a>
+        </div>
+      </div>
+
+      <div class="pt-2 flex justify-end">
+        <button onclick="closeDetailModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold">
+          Close Window
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================
+    // 1. DATA MODELS & LOCAL STORAGE STATE
+    // =========================================================
+
+    const STORAGE_KEYS = {
+      GIGS: 'sparkgig_gigs_v2',
+      BOOKINGS: 'sparkgig_bookings_v2',
+      ROLE: 'sparkgig_active_role_v2'
+    };
+
+    // Pre-seeded Gen-Z Creator Economy Gigs
+    const INITIAL_GIGS = [
+      {
+        id: 'gig-1',
+        title: 'Edit high-retention TikTok & Reels with viral Alex Hormozi style captions',
+        category: 'Video Editing',
+        price: 95,
+        deliveryDays: 2,
+        rating: 4.95,
+        reviewCount: 48,
+        creator: {
+          name: 'Alex Rivera',
+          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+          badge: 'Top Rated Pro',
+          handle: '@alexedits',
+          completedOrders: 142
+        },
+        description: 'Get viral short-form retention with fast pacing, custom sound design, zoom cuts, animated kinetic typography, emojis, and sound effects used by top influencers.',
+        tags: ['CapCut Pro', 'Premiere Pro', 'Hooks', 'Sound FX'],
+        coverImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80'
+      },
+      {
+        id: 'gig-2',
+        title: 'Design high CTR 3D YouTube thumbnails that get millions of impressions',
+        category: 'Thumbnails & Visuals',
+        price: 65,
+        deliveryDays: 1,
+        rating: 4.98,
+        reviewCount: 76,
+        creator: {
+          name: 'Kai Takahashi',
+          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+          badge: 'CTR Specialist',
+          handle: '@kaigraphic',
+          completedOrders: 310
+        },
+        description: 'MrBeast & Ryan Trahan aesthetic thumbnails designed in Blender & Photoshop. High contrast lighting, expressive 3D facial cutouts, and readable mobile typography.',
+        tags: ['Blender 3D', 'Photoshop', 'YouTube CTR', 'Lighting'],
+        coverImage: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&auto=format&fit=crop&q=80'
+      },
+      {
+        id: 'gig-3',
+        title: 'Authentic UGC TikTok video review & aesthetic product unboxing',
+        category: 'UGC & TikTok',
+        price: 180,
+        deliveryDays: 3,
+        rating: 4.9,
+        reviewCount: 32,
+        creator: {
+          name: 'Mia Jenkins',
+          avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80',
+          badge: 'Top UGC Creator',
+          handle: '@mia_lifestyle',
+          completedOrders: 89
+        },
+        description: 'High-converting Gen-Z UGC video recorded with Sony A7IV and iPhone 16 Pro 4K. Includes 3 hook variations, aesthetic unboxing setup, voiceover, and TikTok ad rights.',
+        tags: ['UGC Ads', 'TikTok Spark', 'Unboxing', 'Voiceover'],
+        coverImage: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=800&auto=format&fit=crop&q=80'
+      },
+      {
+        id: 'gig-4',
+        title: 'Produce custom lofi hiphop beats & podcast background audio mixes',
+        category: 'Audio & Beats',
+        price: 110,
+        deliveryDays: 2,
+        rating: 4.88,
+        reviewCount: 29,
+        creator: {
+          name: 'Zane Martinez',
+          avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
+          badge: 'Music Producer',
+          handle: '@zanetones',
+          completedOrders: 94
+        },
+        description: 'Original chillhop, lofi, or trap beat stems produced in Ableton Live. 100% royalty-free for streams, YouTube intros, podcast bumpers, and background music.',
+        tags: ['Ableton', 'Mastering', 'Royalty-Free', 'Podcast'],
+        coverImage: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=800&auto=format&fit=crop&q=80'
+      },
+      {
+        id: 'gig-5',
+        title: 'Write high retention YouTube video scripts & 10 viral short hooks',
+        category: 'Scriptwriting & Hooks',
+        price: 85,
+        deliveryDays: 2,
+        rating: 4.92,
+        reviewCount: 41,
+        creator: {
+          name: 'Liam Vance',
+          avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150&auto=format&fit=crop&q=80',
+          badge: 'Story Architect',
+          handle: '@liamscripts',
+          completedOrders: 115
+        },
+        description: 'Story-driven YouTube video essay scripts with three-act structures, emotional peaks, retention resets every 45 seconds, and 10 tested viral hook concepts.',
+        tags: ['Storytelling', 'YouTube Growth', 'Hooks', 'Copywriting'],
+        coverImage: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&auto=format&fit=crop&q=80'
+      },
+      {
+        id: 'gig-6',
+        title: 'Complete Creator Brand Kit: Twitch overlay, Sub badges & Media Kit PDF',
+        category: 'Brand Identity',
+        price: 210,
+        deliveryDays: 4,
+        rating: 5.0,
+        reviewCount: 19,
+        creator: {
+          name: 'Sofia Brooks',
+          avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80',
+          badge: 'Design Lead',
+          handle: '@sofiastudio',
+          completedOrders: 64
+        },
+        description: 'Elevate your streaming and sponsorship game. Includes custom Twitch/Kick animated screens, sub emotes, font rules, and a clean sponsor-ready PDF media kit.',
+        tags: ['Figma', 'Twitch Kit', 'Media Kit', 'Stream Overlays'],
+        coverImage: 'https://images.unsplash.com/photo-1558655146-d09347e92766?w=800&auto=format&fit=crop&q=80'
+      }
+    ];
+
+    // Pre-seeded Bookings to demonstrate Pending, Accepted, and Declined states
+    const INITIAL_BOOKINGS = [
+      {
+        id: 'SG-1092',
+        gigId: 'gig-1',
+        gigTitle: 'Edit high-retention TikTok & Reels with viral Alex Hormozi style captions',
+        creatorName: 'Alex Rivera',
+        creatorAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+        clientName: 'Sarah Chen',
+        clientAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
+        packageTier: 'Pro Bundle',
+        amount: 300,
+        status: 'PENDING', // PENDING, ACCEPTED, DECLINED
+        deadline: '2026-10-05',
+        brief: 'Need 3 fast-paced video edits for our AI productivity app launch. Bold yellow subtitles, sound effects on key bullet points, and 2-second pacing.',
+        assetsUrl: 'https://drive.google.com/drive/folders/sample-clips',
+        createdAt: '2026-09-18T10:30:00.000Z'
+      },
+      {
+        id: 'SG-1088',
+        gigId: 'gig-2',
+        gigTitle: 'Design high CTR 3D YouTube thumbnails that get millions of impressions',
+        creatorName: 'Kai Takahashi',
+        creatorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+        clientName: 'Sarah Chen',
+        clientAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
+        packageTier: 'Standard',
+        amount: 65,
+        status: 'ACCEPTED',
+        deadline: '2026-09-24',
+        brief: 'Thumbnail for video title: "I built an AI startup in 24 hours". Want vibrant cyan and purple lighting with an intense reaction expression cutout.',
+        assetsUrl: 'https://dropbox.com/s/reactions.zip',
+        createdAt: '2026-09-16T14:15:00.000Z'
+      },
+      {
+        id: 'SG-1074',
+        gigId: 'gig-3',
+        gigTitle: 'Authentic UGC TikTok video review & aesthetic product unboxing',
+        creatorName: 'Mia Jenkins',
+        creatorAvatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80',
+        clientName: 'Sarah Chen',
+        clientAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
+        packageTier: 'Standard',
+        amount: 180,
+        status: 'DECLINED',
+        deadline: '2026-09-10',
+        brief: 'Skincare review video within 24 hours turnaround.',
+        assetsUrl: '',
+        createdAt: '2026-09-08T09:00:00.000Z'
+      }
+    ];
+
+    let gigs = [];
+    let bookings = [];
+    let activeRole = 'client'; // 'client' or 'creator'
+    let currentCategory = 'All';
+    let activeCreatorFilter = 'ALL';
+    let activeClientFilter = 'ALL';
+
+    function loadState() {
+      try {
+        const storedGigs = localStorage.getItem(STORAGE_KEYS.GIGS);
+        gigs = storedGigs ? JSON.parse(storedGigs) : INITIAL_GIGS;
+        
+        const storedBookings = localStorage.getItem(STORAGE_KEYS.BOOKINGS);
+        bookings = storedBookings ? JSON.parse(storedBookings) : INITIAL_BOOKINGS;
+
+        const storedRole = localStorage.getItem(STORAGE_KEYS.ROLE);
+        activeRole = storedRole ? storedRole : 'client';
+      } catch (err) {
+        console.error('Local storage reading error:', err);
+        gigs = INITIAL_GIGS;
+        bookings = INITIAL_BOOKINGS;
+      }
+    }
+
+    function saveGigs() {
+      localStorage.setItem(STORAGE_KEYS.GIGS, JSON.stringify(gigs));
+    }
+
+    function saveBookings() {
+      localStorage.setItem(STORAGE_KEYS.BOOKINGS, JSON.stringify(bookings));
+      updateNotificationBadges();
+      updateStudioStats();
+    }
+
+    // =========================================================
+    // 2. DUAL ROLE SWITCHER & VIEW NAVIGATION
+    // =========================================================
+
+    function setRole(role) {
+      activeRole = role;
+      localStorage.setItem(STORAGE_KEYS.ROLE, role);
+
+      const clientBtn = document.getElementById('role-client-btn');
+      const creatorBtn = document.getElementById('role-creator-btn');
+      const activeName = document.getElementById('active-name');
+      const activeRoleLabel = document.getElementById('active-role-label');
+      const activeAvatar = document.getElementById('active-avatar');
+
+      if (role === 'client') {
+        clientBtn.className = 'flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all bg-fuchsia-600 text-white shadow-md';
+        creatorBtn.className = 'flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all text-slate-400 hover:text-white';
+        activeName.textContent = 'Sarah Chen';
+        activeRoleLabel.textContent = 'Client / Marketer';
+        activeAvatar.src = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80';
+        showToast('Switched to Client Mode: Explore & commission creator gigs', 'info');
+      } else {
+        creatorBtn.className = 'flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all bg-purple-600 text-white shadow-md';
+        clientBtn.className = 'flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all text-slate-400 hover:text-white';
+        activeName.textContent = 'Alex Rivera';
+        activeRoleLabel.textContent = 'Creator / Video Editor';
+        activeAvatar.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80';
+        showToast('Switched to Creator Mode: Review bookings in Creator Studio', 'info');
+      }
+
+      // Re-render UI components dependent on state
+      renderCreatorDashboard();
+      renderClientBookings();
+    }
+
+    function switchView(viewId) {
+      const views = ['marketplace', 'post', 'dashboard', 'bookings'];
+      
+      views.forEach(v => {
+        const el = document.getElementById(`view-${v}`);
+        const navBtn = document.getElementById(`nav-${v === 'marketplace' ? 'marketplace' : v === 'post' ? 'post' : v === 'dashboard' ? 'creator-dash' : 'my-bookings'}`);
+        
+        if (v === viewId) {
+          el.classList.remove('hidden');
+          if (navBtn) {
+            navBtn.classList.add('text-white', 'bg-slate-700', 'shadow-sm');
+            navBtn.classList.remove('text-slate-400');
+          }
+        } else {
+          el.classList.add('hidden');
+          if (navBtn) {
+            navBtn.classList.remove('text-white', 'bg-slate-700', 'shadow-sm');
+            navBtn.classList.add('text-slate-400');
+          }
+        }
+      });
+
+      // Update mobile nav highlight
+      document.querySelectorAll('.mobile-nav-item').forEach(item => {
+        if (item.dataset.target === viewId) {
+          item.classList.add('text-fuchsia-400');
+          item.classList.remove('text-slate-400');
+        } else {
+          item.classList.remove('text-fuchsia-400');
+          item.classList.add('text-slate-400');
+        }
+      });
+
+      // Trigger respective view render
+      if (viewId === 'marketplace') {
+        renderGigs();
+      } else if (viewId === 'dashboard') {
+        renderCreatorDashboard();
+      } else if (viewId === 'bookings') {
+        renderClientBookings();
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // =========================================================
+    // 3. MARKETPLACE: BROWSE, SEARCH & FILTER
+    // =========================================================
+
+    const CATEGORIES = [
+      'All',
+      'Video Editing',
+      'UGC & TikTok',
+      'Thumbnails & Visuals',
+      'Audio & Beats',
+      'Scriptwriting & Hooks',
+      'Brand Identity'
+    ];
+
+    function renderCategories() {
+      const container = document.getElementById('categories-container');
+      container.innerHTML = CATEGORIES.map(cat => {
+        const isActive = cat === currentCategory;
+        const activeClass = isActive 
+          ? 'bg-fuchsia-600 text-white font-bold shadow-md shadow-fuchsia-600/30' 
+          : 'bg-slate-900/90 text-slate-400 hover:text-white border border-slate-800';
+        return `
+          <button 
+            onclick="setCategory('${cat}')" 
+            class="px-3.5 py-1.5 rounded-xl text-xs whitespace-nowrap transition-all ${activeClass}"
+          >
+            ${cat}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function setCategory(cat) {
+      currentCategory = cat;
+      renderCategories();
+      renderGigs();
+    }
+
+    function handleFilterChange() {
+      renderGigs();
+    }
+
+    function resetFilters() {
+      document.getElementById('search-input').value = '';
+      document.getElementById('filter-sort').value = 'popular';
+      currentCategory = 'All';
+      renderCategories();
+      renderGigs();
+    }
+
+    function renderGigs() {
+      const query = (document.getElementById('search-input').value || '').trim().toLowerCase();
+      const sort = document.getElementById('filter-sort').value;
+      const grid = document.getElementById('gigs-grid');
+      const emptyState = document.getElementById('gigs-empty-state');
+      const countBadge = document.getElementById('gig-count-badge');
+
+      // Filter by category & search term
+      let filtered = gigs.filter(g => {
+        const matchesCategory = (currentCategory === 'All') || (g.category === currentCategory);
+        const matchesSearch = !query || 
+          g.title.toLowerCase().includes(query) || 
+          g.description.toLowerCase().includes(query) ||
+          g.creator.name.toLowerCase().includes(query) ||
+          (g.tags && g.tags.some(t => t.toLowerCase().includes(query)));
+        
+        return matchesCategory && matchesSearch;
+      });
+
+      // Sorting
+      if (sort === 'price-asc') {
+        filtered.sort((a, b) => a.price - b.price);
+      } else if (sort === 'price-desc') {
+        filtered.sort((a, b) => b.price - a.price);
+      } else if (sort === 'rating') {
+        filtered.sort((a, b) => b.rating - a.rating);
+      }
+
+      countBadge.textContent = `Showing ${filtered.length} creator ${filtered.length === 1 ? 'gig' : 'gigs'}`;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      grid.innerHTML = filtered.map(gig => `
+        <div class="glass-card rounded-2xl overflow-hidden flex flex-col justify-between hover:border-fuchsia-500/50 hover:shadow-xl hover:shadow-purple-900/20 transition-all duration-300 group">
+          
+          <!-- Card Thumbnail with Category Badge -->
+          <div class="relative h-44 overflow-hidden bg-slate-900">
+            <img 
+              src="${gig.coverImage}" 
+              alt="${gig.title}" 
+              onerror="this.src='https://placehold.co/600x400/1e293b/ffffff?text=Creator+Gig'"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80"></div>
+            <div class="absolute top-3 left-3">
+              <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-900/90 text-fuchsia-300 backdrop-blur border border-fuchsia-500/30">
+                ${gig.category}
+              </span>
+            </div>
+            <div class="absolute bottom-3 right-3 flex items-center gap-1 px-2 py-0.5 rounded-lg bg-black/70 backdrop-blur text-amber-300 text-xs font-bold">
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400 text-amber-400"></i>
+              <span>${gig.rating}</span>
+              <span class="text-slate-400 font-normal text-[10px]">(${gig.reviewCount})</span>
+            </div>
+          </div>
+
+          <!-- Card Content Body -->
+          <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+            
+            <!-- Creator Info -->
+            <div class="flex items-center gap-2.5">
+              <img 
+                src="${gig.creator.avatar}" 
+                alt="${gig.creator.name}" 
+                onerror="this.src='https://placehold.co/100x100/1e293b/ffffff?text=Avatar'"
+                class="w-8 h-8 rounded-full object-cover ring-2 ring-purple-500/30"
+              />
+              <div class="leading-tight truncate flex-1">
+                <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                  ${gig.creator.name}
+                  ${gig.creator.badge ? `<span class="text-[9px] px-1.5 py-0.2 bg-purple-500/20 text-purple-300 rounded font-medium border border-purple-500/30">${gig.creator.badge}</span>` : ''}
+                </div>
+                <div class="text-[10px] text-slate-400">${gig.creator.handle || '@creator'} • ${gig.deliveryDays}d delivery</div>
+              </div>
+            </div>
+
+            <!-- Title & Description excerpt -->
+            <div>
+              <h3 class="text-sm font-bold text-slate-100 group-hover:text-fuchsia-300 transition-colors line-clamp-2 leading-snug">
+                ${gig.title}
+              </h3>
+              <p class="text-xs text-slate-400 mt-1.5 line-clamp-2 leading-relaxed">
+                ${gig.description}
+              </p>
+            </div>
+
+            <!-- Tags -->
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              ${(gig.tags || []).slice(0, 3).map(tag => `
+                <span class="px-2 py-0.5 rounded-md bg-slate-800 text-[10px] font-medium text-slate-300 border border-slate-700/60">
+                  #${tag}
+                </span>
+              `).join('')}
+            </div>
+
+            <!-- Card Bottom Bar: Price & Book CTA -->
+            <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold">Starting at</span>
+                <span class="text-base font-black text-white">$${gig.price}</span>
+              </div>
+              <button 
+                onclick="openBookModal('${gig.id}')" 
+                class="px-4 py-2 bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-500 hover:to-purple-500 text-white rounded-xl text-xs font-bold shadow-md shadow-purple-600/20 flex items-center gap-1.5 transition-all transform active:scale-95"
+              >
+                <span>Book Creator</span>
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    // =========================================================
+    // 4. POST A GIG (CREATOR WORKFLOW)
+    // =========================================================
+
+    const RANDOM_COVERS = [
+      'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1536240478700-b869070f9279?w=800&auto=format&fit=crop&q=80'
+    ];
+
+    function cycleRandomCover() {
+      const current = document.getElementById('gig-cover').value;
+      let next = RANDOM_COVERS[Math.floor(Math.random() * RANDOM_COVERS.length)];
+      if (next === current) next = RANDOM_COVERS[0];
+      document.getElementById('gig-cover').value = next;
+      updateCoverPreview(next);
+    }
+
+    function updateCoverPreview(url) {
+      const img = document.getElementById('cover-preview-img');
+      img.src = url || 'https://placehold.co/600x400/1e293b/ffffff?text=Preview';
+    }
+
+    function handlePostGigSubmit(event) {
+      event.preventDefault();
+
+      const titleRaw = document.getElementById('gig-title').value.trim();
+      const title = titleRaw.startsWith('I will') ? titleRaw : `I will ${titleRaw}`;
+      const category = document.getElementById('gig-category').value;
+      const deliveryDays = parseInt(document.getElementById('gig-delivery').value, 10) || 2;
+      const price = parseFloat(document.getElementById('gig-price').value) || 50;
+      const description = document.getElementById('gig-description').value.trim();
+      const coverImage = document.getElementById('gig-cover').value.trim() || RANDOM_COVERS[0];
+      const tagsRaw = document.getElementById('gig-tags').value;
+      const tags = tagsRaw.split(',').map(t => t.trim()).filter(Boolean);
+
+      const newGig = {
+        id: 'gig-' + Date.now(),
+        title,
+        category,
+        price,
+        deliveryDays,
+        rating: 5.0,
+        reviewCount: 1,
+        creator: {
+          name: 'Alex Rivera',
+          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+          badge: 'Pro Verified',
+          handle: '@alexedits',
+          completedOrders: 143
+        },
+        description,
+        tags,
+        coverImage
+      };
+
+      gigs.unshift(newGig);
+      saveGigs();
+
+      showToast('🎉 Your new creator gig is live on the marketplace!', 'success');
+      document.getElementById('post-gig-form').reset();
+      
+      // Auto-switch back to marketplace to see the new gig
+      setTimeout(() => {
+        switchView('marketplace');
+      }, 500);
+    }
+
+    // =========================================================
+    // 5. BOOK A GIG & MODAL WORKFLOW (CLIENT)
+    // =========================================================
+
+    let currentBookingGig = null;
+
+    function openBookModal(gigId) {
+      const gig = gigs.find(g => g.id === gigId);
+      if (!gig) return;
+
+      currentBookingGig = gig;
+
+      document.getElementById('modal-gig-id').value = gig.id;
+      document.getElementById('modal-gig-title').textContent = gig.title;
+      document.getElementById('modal-creator-name').textContent = `Offered by ${gig.creator.name} • ${gig.deliveryDays} day delivery`;
+
+      // Set pricing tiers based on starting rate
+      document.getElementById('package-price-std').textContent = `$${gig.price}`;
+      document.getElementById('package-price-pro').textContent = `$${Math.round(gig.price * 2.5)}`;
+      document.getElementById('package-price-monthly').textContent = `$${Math.round(gig.price * 6.5)}`;
+
+      // Set default deadline (3 days from now)
+      const defaultDate = new Date();
+      defaultDate.setDate(defaultDate.getDate() + gig.deliveryDays + 1);
+      document.getElementById('book-deadline').value = defaultDate.toISOString().split('T')[0];
+
+      updateModalPrice();
+
+      const modal = document.getElementById('book-modal');
+      modal.classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeBookModal() {
+      document.getElementById('book-modal').classList.add('hidden');
+      currentBookingGig = null;
+    }
+
+    function updateModalPrice() {
+      if (!currentBookingGig) return;
+      const selectedTier = document.querySelector('input[name="package-tier"]:checked')?.value || 'Standard';
+      let total = currentBookingGig.price;
+
+      if (selectedTier === 'Pro Bundle') {
+        total = Math.round(currentBookingGig.price * 2.5);
+      } else if (selectedTier === 'Viral Monthly') {
+        total = Math.round(currentBookingGig.price * 6.5);
+      }
+
+      document.getElementById('modal-summary-total').textContent = `$${total}`;
+    }
+
+    function handleBookingSubmit(event) {
+      event.preventDefault();
+
+      if (!currentBookingGig) return;
+
+      const gigId = currentBookingGig.id;
+      const packageTier = document.querySelector('input[name="package-tier"]:checked')?.value || 'Standard';
+      let amount = currentBookingGig.price;
+      if (packageTier === 'Pro Bundle') amount = Math.round(currentBookingGig.price * 2.5);
+      if (packageTier === 'Viral Monthly') amount = Math.round(currentBookingGig.price * 6.5);
+
+      const brief = document.getElementById('book-brief').value.trim();
+      const deadline = document.getElementById('book-deadline').value;
+      const assetsUrl = document.getElementById('book-assets-url').value.trim();
+
+      const newBookingId = 'SG-' + Math.floor(1000 + Math.random() * 9000);
+
+      const newBooking = {
+        id: newBookingId,
+        gigId: gigId,
+        gigTitle: currentBookingGig.title,
+        creatorName: currentBookingGig.creator.name,
+        creatorAvatar: currentBookingGig.creator.avatar,
+        clientName: 'Sarah Chen',
+        clientAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
+        packageTier,
+        amount,
+        status: 'PENDING', // default pending creator review
+        deadline,
+        brief,
+        assetsUrl,
+        createdAt: new Date().toISOString()
+      };
+
+      bookings.unshift(newBooking);
+      saveBookings();
+
+      closeBookModal();
+      document.getElementById('booking-form').reset();
+
+      // Show receipt confirmation modal
+      showConfirmationModal(newBooking);
+    }
+
+    function showConfirmationModal(booking) {
+      document.getElementById('receipt-id').textContent = '#' + booking.id;
+      document.getElementById('receipt-gig').textContent = booking.gigTitle;
+      document.getElementById('receipt-creator').textContent = booking.creatorName;
+      document.getElementById('receipt-package').textContent = booking.packageTier;
+      document.getElementById('receipt-amount').textContent = `$${booking.amount}.00`;
+
+      const confModal = document.getElementById('confirmation-modal');
+      confModal.classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeConfirmationModal(destinationView) {
+      document.getElementById('confirmation-modal').classList.add('hidden');
+      if (destinationView) {
+        switchView(destinationView);
+      }
+    }
+
+    // =========================================================
+    // 6. CREATOR DASHBOARD: MANAGE INCOMING BOOKINGS
+    // =========================================================
+
+    function filterCreatorOrders(status) {
+      activeCreatorFilter = status;
+      document.querySelectorAll('.creator-filter-btn').forEach(btn => {
+        if (btn.textContent.toLowerCase().includes(status.toLowerCase()) || (status === 'ALL' && btn.textContent === 'All')) {
+          btn.className = 'creator-filter-btn px-2.5 py-1 rounded-lg bg-slate-800 text-white font-medium';
+        } else {
+          btn.className = 'creator-filter-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white font-medium';
+        }
+      });
+      renderCreatorDashboard();
+    }
+
+    function renderCreatorDashboard() {
+      const container = document.getElementById('creator-bookings-list');
+      const emptyState = document.getElementById('creator-bookings-empty');
+      const ordersCount = document.getElementById('creator-orders-count');
+
+      // Creator: Alex Rivera bookings
+      const creatorBookings = bookings.filter(b => b.creatorName === 'Alex Rivera');
+      ordersCount.textContent = `${creatorBookings.length} bookings`;
+
+      let filtered = creatorBookings;
+      if (activeCreatorFilter !== 'ALL') {
+        filtered = creatorBookings.filter(b => b.status === activeCreatorFilter);
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      container.innerHTML = filtered.map(order => {
+        
+        let statusBadge = '';
+        if (order.status === 'PENDING') {
+          statusBadge = `<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1.5"><i data-lucide="clock" class="w-3 h-3"></i> Pending Review</span>`;
+        } else if (order.status === 'ACCEPTED') {
+          statusBadge = `<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5"><i data-lucide="check-circle-2" class="w-3 h-3"></i> Accepted & In Progress</span>`;
+        } else if (order.status === 'DECLINED') {
+          statusBadge = `<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30 flex items-center gap-1.5"><i data-lucide="x-circle" class="w-3 h-3"></i> Declined</span>`;
+        }
+
+        return `
+          <div class="glass-card rounded-2xl p-5 border border-slate-800 transition-all hover:border-slate-700">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              
+              <!-- Client & Gig info -->
+              <div class="flex items-start gap-3.5 flex-1">
+                <img 
+                  src="${order.clientAvatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150'}" 
+                  alt="${order.clientName}" 
+                  class="w-11 h-11 rounded-xl object-cover ring-1 ring-slate-700"
+                />
+                <div class="space-y-1 flex-1">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="font-mono text-xs text-fuchsia-400 font-bold">#${order.id}</span>
+                    <span class="text-xs font-bold text-white">${order.clientName}</span>
+                    <span class="text-[11px] text-slate-400">• Tier: <strong class="text-slate-300">${order.packageTier}</strong></span>
+                    ${statusBadge}
+                  </div>
+                  <h4 class="text-sm font-semibold text-slate-200">${order.gigTitle}</h4>
+                  <div class="text-xs text-slate-400 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/80 mt-2">
+                    <span class="font-semibold text-slate-300">Client Brief:</span> "${order.brief}"
+                  </div>
+                </div>
+              </div>
+
+              <!-- Price, Deadline & Creator Actions -->
+              <div class="flex flex-row lg:flex-col items-center lg:items-end justify-between border-t lg:border-t-0 border-slate-800 pt-3 lg:pt-0 gap-3">
+                <div class="text-left lg:text-right">
+                  <div class="text-lg font-extrabold text-white">$${order.amount}</div>
+                  <div class="text-[11px] text-slate-400 flex items-center gap-1">
+                    <i data-lucide="calendar" class="w-3 h-3"></i> Due ${order.deadline}
+                  </div>
+                </div>
+
+                <!-- Action buttons based on status -->
+                <div class="flex items-center gap-2">
+                  ${order.status === 'PENDING' ? `
+                    <button 
+                      onclick="updateOrderStatus('${order.id}', 'DECLINED')" 
+                      class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-rose-950/50 hover:text-rose-400 text-slate-300 border border-slate-700 transition-all"
+                    >
+                      Decline
+                    </button>
+                    <button 
+                      onclick="updateOrderStatus('${order.id}', 'ACCEPTED')" 
+                      class="px-4 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/30 flex items-center gap-1.5 transition-all"
+                    >
+                      <i data-lucide="check" class="w-3.5 h-3.5"></i> Accept Brief
+                    </button>
+                  ` : `
+                    <button 
+                      onclick="openDetailModal('${order.id}')" 
+                      class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700"
+                    >
+                      View Details
+                    </button>
+                  `}
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    function updateOrderStatus(bookingId, newStatus) {
+      const order = bookings.find(b => b.id === bookingId);
+      if (!order) return;
+
+      order.status = newStatus;
+      saveBookings();
+
+      if (newStatus === 'ACCEPTED') {
+        showToast(`✅ Order #${bookingId} accepted! Moved to production.`, 'success');
+      } else {
+        showToast(`❌ Order #${bookingId} was declined.`, 'error');
+      }
+
+      renderCreatorDashboard();
+      renderClientBookings();
+    }
+
+    function updateStudioStats() {
+      const alexOrders = bookings.filter(b => b.creatorName === 'Alex Rivera');
+      const pendingCount = alexOrders.filter(b => b.status === 'PENDING').length;
+      const acceptedOrders = alexOrders.filter(b => b.status === 'ACCEPTED');
+      
+      const totalEarned = acceptedOrders.reduce((sum, o) => sum + o.amount, 980);
+
+      document.getElementById('stat-earnings').textContent = `$${totalEarned.toLocaleString()}`;
+      document.getElementById('stat-pending').textContent = pendingCount;
+      document.getElementById('stat-active').textContent = acceptedOrders.length;
+
+      const totalDecided = alexOrders.filter(o => o.status !== 'PENDING').length;
+      const rate = totalDecided > 0 ? Math.round((acceptedOrders.length / totalDecided) * 100) : 96;
+      document.getElementById('stat-rate').textContent = `${rate}%`;
+    }
+
+    // =========================================================
+    // 7. MY BOOKINGS (CLIENT FEATURE)
+    // =========================================================
+
+    function filterClientBookings(status) {
+      activeClientFilter = status;
+      document.querySelectorAll('.client-filter-btn').forEach(btn => {
+        if (btn.textContent.toLowerCase().includes(status.toLowerCase()) || (status === 'ALL' && btn.textContent === 'All Bookings')) {
+          btn.className = 'client-filter-btn px-3 py-1.5 rounded-lg bg-slate-800 text-white font-medium whitespace-nowrap';
+        } else {
+          btn.className = 'client-filter-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white font-medium whitespace-nowrap';
+        }
+      });
+      renderClientBookings();
+    }
+
+    function renderClientBookings() {
+      const container = document.getElementById('client-bookings-list');
+      const emptyState = document.getElementById('client-bookings-empty');
+
+      // Client bookings for Sarah Chen
+      const clientBookings = bookings.filter(b => b.clientName === 'Sarah Chen');
+
+      let filtered = clientBookings;
+      if (activeClientFilter !== 'ALL') {
+        filtered = clientBookings.filter(b => b.status === activeClientFilter);
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      container.innerHTML = filtered.map(order => {
+        
+        let statusBadge = '';
+        let borderClass = 'border-slate-800';
+
+        if (order.status === 'PENDING') {
+          statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> Pending Approval
+          </span>`;
+          borderClass = 'border-amber-500/20';
+        } else if (order.status === 'ACCEPTED') {
+          statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Accepted & In Progress
+          </span>`;
+          borderClass = 'border-emerald-500/30';
+        } else if (order.status === 'DECLINED') {
+          statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30 flex items-center gap-1.5">
+            <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Declined
+          </span>`;
+          borderClass = 'border-rose-500/20';
+        }
+
+        return `
+          <div class="glass-card rounded-2xl p-5 border ${borderClass} transition-all">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              
+              <div class="flex items-start gap-3.5 flex-1">
+                <img 
+                  src="${order.creatorAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'}" 
+                  alt="${order.creatorName}" 
+                  class="w-12 h-12 rounded-xl object-cover ring-1 ring-slate-700 shrink-0"
+                />
+                <div class="space-y-1">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="font-mono text-xs text-cyan-400 font-bold">#${order.id}</span>
+                    <span class="text-xs font-bold text-white">${order.creatorName}</span>
+                    ${statusBadge}
+                  </div>
+                  <h4 class="text-sm font-bold text-slate-100">${order.gigTitle}</h4>
+                  <div class="text-xs text-slate-400 flex items-center gap-3 pt-1">
+                    <span>Package: <strong class="text-slate-200">${order.packageTier}</strong></span>
+                    <span>• Due: <strong class="text-slate-200">${order.deadline}</strong></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex sm:flex-col items-center sm:items-end justify-between border-t sm:border-t-0 border-slate-800 pt-3 sm:pt-0 gap-2">
+                <div class="text-right">
+                  <span class="text-[10px] text-slate-400 uppercase tracking-wider block">Investment</span>
+                  <span class="text-base font-black text-white">$${order.amount}</span>
+                </div>
+                <button 
+                  onclick="openDetailModal('${order.id}')" 
+                  class="px-4 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5 transition-all"
+                >
+                  <i data-lucide="eye" class="w-3.5 h-3.5 text-cyan-400"></i> View Brief
+                </button>
+              </div>
+
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    // =========================================================
+    // 8. DETAIL MODAL & TOAST HELPER
+    // =========================================================
+
+    function openDetailModal(orderId) {
+      const order = bookings.find(b => b.id === orderId);
+      if (!order) return;
+
+      document.getElementById('detail-order-id').textContent = '#' + order.id;
+      document.getElementById('detail-gig-title').textContent = order.gigTitle;
+      document.getElementById('detail-brief').textContent = `"${order.brief}"`;
+      document.getElementById('detail-client-name').textContent = order.clientName;
+      document.getElementById('detail-creator-name').textContent = order.creatorName;
+      document.getElementById('detail-deadline').textContent = order.deadline;
+      document.getElementById('detail-price').textContent = `$${order.amount}`;
+
+      const assetRow = document.getElementById('detail-assets-row');
+      const assetLink = document.getElementById('detail-assets-link');
+      if (order.assetsUrl) {
+        assetRow.classList.remove('hidden');
+        assetLink.href = order.assetsUrl;
+        assetLink.textContent = order.assetsUrl;
+      } else {
+        assetRow.classList.add('hidden');
+      }
+
+      document.getElementById('order-detail-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeDetailModal() {
+      document.getElementById('order-detail-modal').classList.add('hidden');
+    }
+
+    function updateNotificationBadges() {
+      const alexPending = bookings.filter(b => b.creatorName === 'Alex Rivera' && b.status === 'PENDING').length;
+      const pendingBadge = document.getElementById('badge-pending-orders');
+      if (alexPending > 0) {
+        pendingBadge.textContent = alexPending;
+        pendingBadge.classList.remove('hidden');
+      } else {
+        pendingBadge.classList.add('hidden');
+      }
+
+      const clientBadge = document.getElementById('badge-client-bookings');
+      if (bookings.some(b => b.clientName === 'Sarah Chen')) {
+        clientBadge.classList.remove('hidden');
+      }
+    }
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      let icon = 'check-circle';
+      let border = 'border-emerald-500/40 bg-slate-900/95 text-emerald-300';
+      if (type === 'error') {
+        icon = 'alert-octagon';
+        border = 'border-rose-500/40 bg-slate-900/95 text-rose-300';
+      } else if (type === 'info') {
+        icon = 'info';
+        border = 'border-purple-500/40 bg-slate-900/95 text-purple-300';
+      }
+
+      toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-2xl border ${border} shadow-2xl backdrop-blur text-xs font-semibold fade-scale-enter`;
+      toast.innerHTML = `
+        <i data-lucide="${icon}" class="w-4 h-4 shrink-0"></i>
+        <span>${message}</span>
+      `;
+
+      container.appendChild(toast);
+      lucide.createIcons();
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // =========================================================
+    // 9. APP INITIALIZATION
+    // =========================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      renderCategories();
+      renderGigs();
+      setRole(activeRole);
+      updateStudioStats();
+      updateNotificationBadges();
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
